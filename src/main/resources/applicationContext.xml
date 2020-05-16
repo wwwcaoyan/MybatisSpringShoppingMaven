@@ -47,7 +47,9 @@
         <aop:pointcut expression="execution(* service.*.*(..))" id="txPointCut"/>
         <!-- 切面：将切入点与通知关联 -->
         <aop:advisor advice-ref="myAdvice" pointcut-ref="txPointCut"/>
+
     </aop:config>
+
     <!-- 配置MyBatis工厂，同时指定数据源，并与MyBatis完美整合 -->
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource" />

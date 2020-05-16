@@ -4,10 +4,31 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="dao.GoodsDAO">
 
-    <select id="getGoodsByPage" parameterType="Map"
-            resultType="bean.vo.GoodsVo">
-        <!--limit分页格式， ${(pageNo-1)*pageSize},${pageSize};-->
-		select * from goods limit ${(pageNo-1)*pageSize},${pageSize};
+<!--    <select id="getGoodsByPage" parameterType="Map"-->
+<!--            resultType="bean.vo.GoodsVo">-->
+<!--        &lt;!&ndash;limit分页格式， ${(pageNo-1)*pageSize},${pageSize};&ndash;&gt;-->
+<!--		select * from goods limit ${(pageNo-1)*pageSize},${pageSize};-->
+<!--	</select>-->
+
+	<resultMap type="bean.vo.GoodsVo" id="goodsWithItems">
+		<id property="goodsId" column="goodsid"/>
+		<result property="goodsName" column="goodsname"/>
+		<result property="price" column="price"/>
+		<!-- 一对多关联查询 -->
+		<collection property="soldItems"  ofType="bean.vo.Item">
+			<id property="id" column="id"></id>
+			<result property="quantity" column="quantity"/>
+		</collection>
+	</resultMap>
+
+	<select id="getGoodsWithItems" resultMap="goodsWithItems">
+		select *
+        from goods as g left join item as i
+		on g.goodsid=i.goodsid
+		and i.id in
+		(select itemid
+		from myorder_item as oi,item as i
+		where i.id=oi.itemid)
 	</select>
     <!-- 根据uid查询一个用户信息 -->
     <select id="getGoodsById" parameterType="Integer"
@@ -16,7 +37,7 @@
 	</select>
 
     <select id="getPageCount"  resultType="Integer">
-		select count(*) from goods
+		select (count(*)+1)/${sizePerPage} from goods
 	</select>
 
     <!-- 添加一个用户 ，#{uname}为com.po.MyUser的属性值-->
@@ -24,9 +45,9 @@
 		insert into goods (goodsid,goodsname,price) values(null,#{goodsName},#{price})
 	</insert>
     <!-- 修改一个用户 -->
-    <update id="modifyGoods" parameterType="bean.vo.GoodsVo">
-		update goods set goodsname = #{goodsName},price = #{price} where goodsid = #{goodsId}
-	</update>
+	<update id="modifyGoods" parameterType="bean.vo.GoodsVo">
+			update goods set goodsname = #{goodsName},price = #{price} where goodsid=#{id}
+		</update>
     <!-- 删除一个用户 -->
     <delete id="deleteGoods" parameterType="Integer">
 		delete from goods where  goodsid = #{goodsId}

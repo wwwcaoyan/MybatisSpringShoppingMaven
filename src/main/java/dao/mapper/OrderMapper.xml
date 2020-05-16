@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dao.OrderDao">
+    <!-- 添加一个用户 ，#{uname}为com.po.MyUser的属性值-->
+    <insert id="saveOrder" parameterType="bean.vo.Order" keyProperty="id" keyColumn="id" useGeneratedKeys="true">
+		insert into myorder (createdtime) values(now())
+	</insert>
+	<insert id="saveOrderItems" parameterType="bean.vo.Order" >
+		insert into myorder_item
+		( id, orderid, itemid)
+		values
+		<foreach collection="items" item="oneItem"  separator=",">
+			(null,#{id},#{oneItem.id})
+		</foreach>
+	</insert>
+
+	<resultMap type="bean.vo.Order" id="OrderWithItems">
+		<id property="id" column="id"/>
+		<result property="createdTime" column="createdtime"/>
+		<!-- 一对多关联查询 -->
+		<collection property="items"  ofType="bean.vo.Item">
+			<id property="id" column="itemid"></id>
+			<result property="quantity" column="quantity"/>
+			<association property="goods" column="goodsid" select="dao.GoodsDAO.getGoodsById"/>
+		</collection>
+	</resultMap>
+
+	<select id="findAllOrders" resultMap="OrderWithItems">
+		select o.*,i.id as itemid,i.quantity ,i.goodsid
+		from myorder as o,item as i,myorder_item as oi
+		where oi.orderid = o.id and oi.itemid=i.id
+	</select>
+<select id="findAllNeededDeletedItemsIds" parameterType="Integer" resultType="Integer">
+	select itemid from myorder_item where orderid=#{id}
+</select>
+	<delete id="deleteOrderItems" parameterType="Integer">
+		delete from myorder_item where orderid = #{id}
+	</delete>
+
+	<delete id="deleteOrderById" parameterType="Integer">
+		delete from myorder where id = #{id}
+	</delete>
+
+
+</mapper>

@@ -1,9 +1,13 @@
 package bean.vo;
 
+import java.util.List;
+
 public class GoodsVo {
 	Integer goodsId;
 	String goodsName;
 	Float price;
+
+	List<Item> soldItems;
 
 	public Integer getGoodsId() {
 		return goodsId;
@@ -24,5 +28,13 @@ public class GoodsVo {
 		this.price = price;
 	}
 
-
+	public Integer getSoldQuantity(){
+		int rst=0;
+		if(soldItems!=null&&soldItems.size()>0){
+			for(Item oneItem:soldItems){
+				rst+=oneItem.getQuantity();
+			}
+		}
+		return rst;
+	}
 }

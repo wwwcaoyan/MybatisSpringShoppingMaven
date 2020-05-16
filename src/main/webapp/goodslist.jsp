@@ -55,13 +55,17 @@
 	<c:if test="${pageNo!=pageCount}">
 </a>
 </c:if>
-共${pageCount }页，当前为第${pageNo }页,<a href="addGoods.jsp">添加商品</a> ${requestScope.resultMessage}
+共${pageCount }页，当前为第${pageNo }页,<a href="addGoods.jsp">添加商品</a>
+<a href="showCart">查看购物车</a>
+<a href="showAllOrders">查看订单</a>
+${requestScope.resultMessage}
 
 <table border=1>
 	<tr>
 		<td>产品编号</td>
 		<td>产品名称</td>
 		<td>产品价格</td>
+		<td>售出数量</td>
 		<td colspan="3">操作</td>
 	</tr>
 	<c:forEach var="goods" items="${requestScope.goodsList}" >
@@ -69,6 +73,7 @@
 			<td>${goods.goodsId}</td>
 			<td>${goods.goodsName}</td>
 			<td>${goods.price}</td>
+			<td>${goods.soldQuantity}</td>
 			<td><a href="addToCart?goodsId=${goods.goodsId}">将产品添加到购物车里</a></td>
 			<td><a href="showModifyPage?goodsId=${goods.goodsId}">修改商品</a></td>
 			<td><a href="deleteGoods?goodsId=${goods.goodsId}">删除商品</a></td>

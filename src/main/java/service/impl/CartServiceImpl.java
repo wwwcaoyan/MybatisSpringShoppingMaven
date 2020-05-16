@@ -5,10 +5,12 @@ import bean.vo.Item;
 import org.springframework.stereotype.Service;
 import service.CartService;
 import service.GoodsService;
+import service.ItemService;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 @Service("cartService")
 public class CartServiceImpl implements CartService {
@@ -16,7 +18,10 @@ public class CartServiceImpl implements CartService {
     @Resource(name="goodsService")
     GoodsService goodsService;
 
-    ArrayList<Item> cart = new ArrayList<Item>();
+    @Resource(name="itemService")
+    ItemService itemService;
+
+    List<Item> cart = new ArrayList<Item>();
 
     public void addToCart(Integer goodsId, int quantity){
 
@@ -26,14 +31,16 @@ public class CartServiceImpl implements CartService {
         boolean find = false;
         while(it.hasNext()){
             Item oneItem = it.next();
-            if(oneItem.getGoods().getGoodsId()==(goodsId)){
+            if(oneItem.getGoods().getGoodsId() == (goodsId)){
                 oneItem.setQuantity(oneItem.getQuantity() + quantity);
                 find = true;
+                itemService.modifyItem(oneItem);
             }
         }
         if(!find){
             Item newItem = new Item(g,quantity);
             cart.add(newItem);
+            itemService.saveItem(newItem);
         }
     }
 
@@ -44,6 +51,7 @@ public class CartServiceImpl implements CartService {
             Item oneItem = it.next();
             if(oneItem.getGoods().getGoodsId()==(goodsId)){
                 oneItem.setQuantity(quantity);
+                itemService.modifyItem(oneItem);
                 break;
             }
         }
@@ -58,6 +66,7 @@ public class CartServiceImpl implements CartService {
                 Integer tGoodsId = temp.getGoods().getGoodsId();
 
                 if(tGoodsId.equals(goodsId)){
+                    itemService.deleteItem(temp.getId());
                     cart.remove(temp);
                     break;
                 }
@@ -68,12 +77,24 @@ public class CartServiceImpl implements CartService {
     }
 
 
-    public ArrayList<Item> getCart() {
+    public List<Item> getCart() {
         return cart;
     }
 
-    public void setCart(ArrayList<Item> cart) {
+    public void setCart(List<Item> cart) {
         this.cart = cart;
+    }
+
+    @Override
+    public void clearCart(List<Item> cart) {
+        if(cart!=null&&cart.size()>0){
+            List<Integer> ids=new ArrayList<Integer>();
+            for(Item item:cart){
+                ids.add(item.getId());
+            }
+            itemService.deleteItemsByIds(ids);
+
+        }
     }
 
 }

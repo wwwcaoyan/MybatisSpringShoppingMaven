@@ -2,6 +2,7 @@ package servlet;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -17,12 +18,15 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
+import service.ItemService;
 
 @Controller
 public class AddToCart extends HttpServlet {
 
 	@Autowired
 	CartService cartService;
+	@Autowired
+    ItemService itemService;
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
@@ -64,10 +68,11 @@ public class AddToCart extends HttpServlet {
 		Integer goodsId = Integer.parseInt(request.getParameter("goodsId"));
 
 		HttpSession session = request.getSession(true);
-		ArrayList<Item> cart = (ArrayList<Item>)session.getAttribute("cart");
+		List<Item> cart = (List<Item>)itemService.findNoIncludedItems();
 		if(cart != null){
 			cartService.setCart(cart);
 			cartService.addToCart(goodsId, 1);
+
 		}else{
 			cart = new ArrayList<Item>();
 			cartService.setCart(cart);

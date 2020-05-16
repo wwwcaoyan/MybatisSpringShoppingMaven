@@ -27,6 +27,8 @@
 <a href="getAllGoods">继续购物</a>
 <a href="clearCart">清空购物车</a>
 
+${requestScope.orderOperationResult}
+
 
 <c:if test="${!empty cart}">
 
@@ -53,10 +55,11 @@
 		</c:forEach>
 
 	</table>
+	<form action="addOrder"><!--此处不需要传数据给后台，servlet可以直接从session中获取购物车cart数据-->
+		<input type="submit" value="添加订单"/>
+	</form>
+
 </c:if>
-
-
-
 
 
 

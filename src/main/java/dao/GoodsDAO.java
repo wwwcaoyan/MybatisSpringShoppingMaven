@@ -9,7 +9,8 @@ import java.util.Map;
 
 @Repository("goodsDao")
 public interface GoodsDAO {
-    List<GoodsVo> getGoodsByPage(Map map);
+    List<GoodsVo> getGoodsWithItems();
+//    List<GoodsVo> getGoodsWithItems(Map map);
     GoodsVo getGoodsById(Integer goodsId);
     int getPageCount();
     Integer saveGoods(GoodsVo newGoods);

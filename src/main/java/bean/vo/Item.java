@@ -2,15 +2,32 @@ package bean.vo;
 
 
 public class Item {
-	private GoodsVo goods;
+	private  int id;
 	private int quantity;
+	private GoodsVo goods;
 
+	public  Item(){
+
+	}
+	public Item(GoodsVo g, int quantity,int id){
+		this.goods=g;
+		this.quantity=quantity;
+		this.id=id;
+
+	}
 	public Item(GoodsVo g, int quantity){
 		this.setGoods(g);
 		this.setQuantity(quantity);
+
+
+	}
+	public void setId(int id) {
+		this.id = id;
 	}
 
-
+	public int getId() {
+		return id;
+	}
 	public GoodsVo getGoods() {
 		return goods;
 	}
