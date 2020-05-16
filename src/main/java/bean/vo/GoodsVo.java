@@ -6,7 +6,6 @@ public class GoodsVo {
 	Integer goodsId;
 	String goodsName;
 	Float price;
-
 	List<Item> soldItems;
 
 	public Integer getGoodsId() {
